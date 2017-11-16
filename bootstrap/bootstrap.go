@@ -1,15 +1,15 @@
 package bootstrap
 
 import (
+	"github.com/flowgen/go-codon/bootstrap/golang"
 	"log"
-	"github.com/grofers/go-codon/bootstrap/golang"
 )
 
 type bootstrappable interface {
 	Bootstrap() bool
 }
 
-var language_map = map[string]bootstrappable {
+var language_map = map[string]bootstrappable{
 	"golang": &golang.Bootstrapper,
 }
 

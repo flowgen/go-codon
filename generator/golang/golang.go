@@ -1,48 +1,48 @@
 package golang
 
 import (
+	imports "golang.org/x/tools/imports"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
-	"log"
-	"strings"
-	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"text/template"
-	imports "golang.org/x/tools/imports"
 
 	"github.com/go-openapi/swag"
 
-	gen_shared "github.com/grofers/go-codon/generator/shared"
-	codon_shared "github.com/grofers/go-codon/shared"
-	config "github.com/grofers/go-codon/runtime/config"
+	gen_shared "github.com/flowgen/go-codon/generator/shared"
+	config "github.com/flowgen/go-codon/runtime/config"
+	codon_shared "github.com/flowgen/go-codon/shared"
 
-	flowgen "github.com/grofers/go-codon/flowgen/generator"
+	flowgen "github.com/flowgen/go-codon/flowgen/generator"
 )
 
 // Important: Dont use lists, use maps
 // While go randomizes iteration results, template does not.
 // So we let template ensure idiomatic (and sorted) results.
 type generator struct {
-	CurrentSpecFile string
-	CurrentSpecFilePath string
-	CurrentAPIName string
-	CurrentDirTarget string
-	CurrentDirPath string
-	CurrentDirName string
-	ProjectName string
-	ClientImports map[string]string
-	ClientEndpoints map[string]map[string]string
-	ClientsUsed map[string]bool
+	CurrentSpecFile       string
+	CurrentSpecFilePath   string
+	CurrentAPIName        string
+	CurrentDirTarget      string
+	CurrentDirPath        string
+	CurrentDirName        string
+	ProjectName           string
+	ClientImports         map[string]string
+	ClientEndpoints       map[string]map[string]string
+	ClientsUsed           map[string]bool
 	ClientEndpointGoNames map[string]string
-	WorkflowsBasePath string
+	WorkflowsBasePath     string
 }
 
-var upstream_generator_list = map[int]func(*generator)bool {
+var upstream_generator_list = map[int]func(*generator) bool{
 	codon_shared.SWAGGER: GenerateUpstreamSwagger,
 	codon_shared.UNKNOWN: GenerateUnknown,
 }
 
-var service_generator_list = map[int]func(*generator)bool {
+var service_generator_list = map[int]func(*generator) bool{
 	codon_shared.SWAGGER: GenerateServiceSwagger,
 	codon_shared.UNKNOWN: GenerateUnknown,
 }
@@ -85,7 +85,7 @@ func (gen *generator) process_templates() error {
 
 		var new_asset_path string
 		if strings.HasSuffix(asset, ".gofile") {
-			new_asset_path = filepath.Join(gen.CurrentDirPath, strings.TrimSuffix(asset, ".gofile") + ".go")
+			new_asset_path = filepath.Join(gen.CurrentDirPath, strings.TrimSuffix(asset, ".gofile")+".go")
 		} else {
 			new_asset_path = filepath.Join(gen.CurrentDirPath, asset)
 		}
@@ -224,8 +224,8 @@ func (gen *generator) generateWorkflows(prefix string, dest string) bool {
 		filename = filename + ".go"
 
 		opts := &flowgen.GenOpts{
-			Spec: gen.CurrentSpecFilePath,
-			Dest: filepath.Join(dest, filename),
+			Spec:      gen.CurrentSpecFilePath,
+			Dest:      filepath.Join(dest, filename),
 			Templates: "spec/templates/workflow/",
 		}
 		err2 = flowgen.Process(opts)

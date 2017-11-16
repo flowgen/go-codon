@@ -204,8 +204,8 @@ import (
   {{ end }}
   {{ range $key, $value := .Imports }}{{ $key }} {{ printf "%q" $value }}
   {{ end }}
-  "github.com/grofers/go-codon/runtime/templates"
-  codon_ms "github.com/grofers/go-codon/runtime/mapstructure"
+  "github.com/flowgen/go-codon/runtime/templates"
+  codon_ms "github.com/flowgen/go-codon/runtime/mapstructure"
 )
 
 {{ range .Responses }}

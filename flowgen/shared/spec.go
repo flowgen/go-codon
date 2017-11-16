@@ -1,96 +1,96 @@
 package shared
 
 import (
-	"log"
-	"fmt"
-	"strings"
 	"encoding/json"
-	"regexp"
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
-	jmespath "github.com/jmespath/go-jmespath"
-	pongo2 "github.com/flosch/pongo2"
-	shared "github.com/grofers/go-codon/shared"
+	"fmt"
 	conv "github.com/cstockton/go-conv"
+	pongo2 "github.com/flosch/pongo2"
+	shared "github.com/flowgen/go-codon/shared"
+	jmespath "github.com/jmespath/go-jmespath"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"log"
+	"regexp"
+	"strings"
 )
 
 type PostSpec struct {
 	//The original spec read from yaml
-	OrigSpec		*Spec
+	OrigSpec *Spec
 	// Compiled list of all the expressions in spec
-	ExpressionMap	map[string]Expression
+	ExpressionMap map[string]Expression
 	// Compiles list of actions
-	ActionMap		map[string]Action
+	ActionMap map[string]Action
 	//Variables added by language level processing
-	LanguageSpec	map[string]interface{}
+	LanguageSpec map[string]interface{}
 }
 
 type Spec struct {
-	Name		string							`yaml:"name"`
-	Start		[]string						`yaml:"start"`
-	Tasks		map[string]Task					`yaml:"tasks"`
-	Output		interface{}						`yaml:"output"`
-	ErrorOutput	interface{}						`yaml:"output-on-error"`
-	References	map[string]map[string]string	`yaml:"references"`
+	Name        string                       `yaml:"name"`
+	Start       []string                     `yaml:"start"`
+	Tasks       map[string]Task              `yaml:"tasks"`
+	Output      interface{}                  `yaml:"output"`
+	ErrorOutput interface{}                  `yaml:"output-on-error"`
+	References  map[string]map[string]string `yaml:"references"`
 }
 
 type Task struct {
-	Join				int						`yaml:"join"`
-	Action				string					`yaml:"action"`
-	Input				map[string]string		`yaml:"input"`
-	PublishRaw			interface{}				`yaml:"publish"`
-	Publish				map[string]string		`yaml:"-"`
-	PublishList			[]PublishObj			`yaml:"-"`
-	ErrorPublishRaw		interface{}				`yaml:"publish-on-error"`
-	ErrorPublish		map[string]string		`yaml:"-"`
-	ErrorPublishList	[]PublishObj			`yaml:"-"`
-	CompletePublishRaw	interface{}				`yaml:"publish-on-complete"`
-	CompletePublish		map[string]string		`yaml:"-"`
-	CompletePublishList	[]PublishObj			`yaml:"-"`
-	OnError				[]map[string]string		`yaml:"on-error"`
-	OnErrorList			[]TodoObj				`yaml:"-"`
-	OnSuccess			[]map[string]string		`yaml:"on-success"`
-	OnSuccessList		[]TodoObj				`yaml:"-"`
-	OnComplete			[]map[string]string		`yaml:"on-complete"`
-	OnCompleteList		[]TodoObj				`yaml:"-"`
-	Timeout				string					`yaml:"timeout"`
-	WithItems			string					`yaml:"with-items"`
-	Loop				LoopInfo				`yaml:"loop"`
+	Join                int                 `yaml:"join"`
+	Action              string              `yaml:"action"`
+	Input               map[string]string   `yaml:"input"`
+	PublishRaw          interface{}         `yaml:"publish"`
+	Publish             map[string]string   `yaml:"-"`
+	PublishList         []PublishObj        `yaml:"-"`
+	ErrorPublishRaw     interface{}         `yaml:"publish-on-error"`
+	ErrorPublish        map[string]string   `yaml:"-"`
+	ErrorPublishList    []PublishObj        `yaml:"-"`
+	CompletePublishRaw  interface{}         `yaml:"publish-on-complete"`
+	CompletePublish     map[string]string   `yaml:"-"`
+	CompletePublishList []PublishObj        `yaml:"-"`
+	OnError             []map[string]string `yaml:"on-error"`
+	OnErrorList         []TodoObj           `yaml:"-"`
+	OnSuccess           []map[string]string `yaml:"on-success"`
+	OnSuccessList       []TodoObj           `yaml:"-"`
+	OnComplete          []map[string]string `yaml:"on-complete"`
+	OnCompleteList      []TodoObj           `yaml:"-"`
+	Timeout             string              `yaml:"timeout"`
+	WithItems           string              `yaml:"with-items"`
+	Loop                LoopInfo            `yaml:"loop"`
 }
 
 type LoopInfo struct {
-	TaskName			string				`yaml:"task"`
-	Input				map[string]string	`yaml:"input"`
-	PublishRaw			interface{}			`yaml:"publish"`
-	Publish				map[string]string	`yaml:"-"`
-	PublishList			[]PublishObj		`yaml:"-"`
-	ErrorPublishRaw		interface{}			`yaml:"publish-on-error"`
-	ErrorPublish		map[string]string	`yaml:"-"`
-	ErrorPublishList	[]PublishObj		`yaml:"-"`
+	TaskName         string            `yaml:"task"`
+	Input            map[string]string `yaml:"input"`
+	PublishRaw       interface{}       `yaml:"publish"`
+	Publish          map[string]string `yaml:"-"`
+	PublishList      []PublishObj      `yaml:"-"`
+	ErrorPublishRaw  interface{}       `yaml:"publish-on-error"`
+	ErrorPublish     map[string]string `yaml:"-"`
+	ErrorPublishList []PublishObj      `yaml:"-"`
 }
 
 type TodoObj struct {
-	TaskName		string
-	ExpressionName	string
-	Srno			int
+	TaskName       string
+	ExpressionName string
+	Srno           int
 }
 
 type PublishObj struct {
-	VariableName	string
-	ExpressionName	string
-	Srno			int
+	VariableName   string
+	ExpressionName string
+	Srno           int
 }
 
 type Expression struct {
-	Type			string
-	Raw				string
-	Srno			int
+	Type string
+	Raw  string
+	Srno int
 }
 
 type Action struct {
-	Type			string
-	Raw				string
-	Pascalized		string
+	Type       string
+	Raw        string
+	Pascalized string
 }
 
 func ReadSpec(filename string) (Spec, error) {
@@ -111,7 +111,7 @@ func ReadSpec(filename string) (Spec, error) {
 
 func (s *Spec) Process() (PostSpec, error) {
 	var err error
-	ps := PostSpec {}
+	ps := PostSpec{}
 	ps.OrigSpec = s
 	if s.References == nil {
 		s.References = make(map[string]map[string]string)
@@ -120,17 +120,17 @@ func (s *Spec) Process() (PostSpec, error) {
 
 	err = s.setLists()
 	if err != nil {
-		return PostSpec {}, err
+		return PostSpec{}, err
 	}
 
 	ps.ExpressionMap, err = s.getExpressionMap()
 	if err != nil {
-		return PostSpec {}, err
+		return PostSpec{}, err
 	}
 
 	ps.ActionMap, err = s.getActionMap()
 	if err != nil {
-		return PostSpec {}, err
+		return PostSpec{}, err
 	}
 
 	return ps, nil
@@ -477,7 +477,7 @@ func (s *Spec) processExpression(expr string) (Expression, error) {
 
 func processAction(action string) (Action, error) {
 	ret_action := Action{}
-	
+
 	action_elems := strings.Split(action, ".")
 	for i := 1; i < len(action_elems); i++ {
 		action_elems[i] = shared.Pascalize(action_elems[i])
@@ -499,7 +499,7 @@ func createPublishMap(publish_list []PublishObj) map[string]string {
 
 func createPublishList(map_list interface{}) ([]PublishObj, error) {
 	if map_list == nil {
-		return []PublishObj {}, nil
+		return []PublishObj{}, nil
 	}
 
 	counter := 1
@@ -512,8 +512,8 @@ func createPublishList(map_list interface{}) ([]PublishObj, error) {
 				return nil, fmt.Errorf("Invalid expression value in publis list: %v", map_list_v)
 			}
 			retlist[counter-1] = PublishObj{
-				Srno: counter,
-				VariableName: ct.(string),
+				Srno:           counter,
+				VariableName:   ct.(string),
 				ExpressionName: ce,
 			}
 			counter++
@@ -532,8 +532,8 @@ func createPublishList(map_list interface{}) ([]PublishObj, error) {
 					return nil, fmt.Errorf("Invalid expression value in publis list: %v", map_list_v)
 				}
 				retlist[counter-1] = PublishObj{
-					Srno: counter,
-					VariableName: ct.(string),
+					Srno:           counter,
+					VariableName:   ct.(string),
 					ExpressionName: ce,
 				}
 				counter++
@@ -555,8 +555,8 @@ func createTodoList(map_list []map[string]string) ([]TodoObj, error) {
 		}
 		for ct, ce := range task_map {
 			retlist[counter-1] = TodoObj{
-				Srno: counter,
-				TaskName: ct,
+				Srno:           counter,
+				TaskName:       ct,
 				ExpressionName: ce,
 			}
 			counter++

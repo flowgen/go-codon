@@ -1,16 +1,16 @@
 package config
 
 import (
-	"fmt"
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
 	"errors"
+	"fmt"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"strings"
 )
 
 type Config struct {
-	Endpoints	map[string]map[string]string	`yaml:"endpoints"`
-	Constants	map[string]interface{}			`yaml:"constants"`
+	Endpoints map[string]map[string]string `yaml:"endpoints"`
+	Constants map[string]interface{}       `yaml:"constants"`
 }
 
 func (cfg *Config) GetEndpoint(endpoint string) *map[string]string {
@@ -35,7 +35,7 @@ func (cfg *Config) GetConstantPath(path string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	for i:=1; i<len(path_s); i++ {
+	for i := 1; i < len(path_s); i++ {
 		obj_t, ok := obj.(map[interface{}]interface{})
 		if !ok {
 			return nil, errors.New("Constant not found")

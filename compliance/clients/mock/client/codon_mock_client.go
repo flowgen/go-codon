@@ -1,8 +1,8 @@
 package client
 
 import (
+	"github.com/flowgen/go-codon/testing/clients/mock/client/operations"
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/grofers/go-codon/testing/clients/mock/client/operations"
 )
 
 func NewHTTPClientWithConfigMap(formats strfmt.Registry, cfgmap map[string]string) *CodonMock {

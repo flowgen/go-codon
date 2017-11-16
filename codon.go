@@ -1,6 +1,6 @@
 package main
 
-import "github.com/grofers/go-codon/cmd"
+import "github.com/flowgen/go-codon/cmd"
 
 // All the generate directives here
 //go:generate go-bindata -prefix bootstrap/golang/content/ -pkg golang -o bootstrap/golang/bindata.go bootstrap/golang/content/...

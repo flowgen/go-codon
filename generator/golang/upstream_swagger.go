@@ -3,11 +3,11 @@ package golang
 import (
 	"fmt"
 	"log"
-	"strings"
 	"path/filepath"
+	"strings"
 
+	shared "github.com/flowgen/go-codon/shared"
 	swagger_generator "github.com/go-swagger/go-swagger/generator"
-	shared "github.com/grofers/go-codon/shared"
 )
 
 func GenerateUpstreamSwagger(gen *generator) bool {
@@ -99,10 +99,10 @@ func GenerateServiceSwagger(gen *generator) bool {
 	// TODO: Add support for template config
 	// Adding views template to configuration
 	opts.Sections.Application = append(opts.Sections.Application, swagger_generator.TemplateOpts{
-		Name:       "views",
-		Source:     "asset:serverViews",
-		Target:     "{{ joinFilePath .Target .ServerPackage }}",
-		FileName:   "views.go",
+		Name:     "views",
+		Source:   "asset:serverViews",
+		Target:   "{{ joinFilePath .Target .ServerPackage }}",
+		FileName: "views.go",
 	})
 
 	if opts.Imports == nil {

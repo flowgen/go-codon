@@ -1,18 +1,18 @@
 package templates
 
 import (
-	"github.com/flosch/pongo2"
 	"errors"
+	"github.com/flosch/pongo2"
 	"io"
 	"time"
 	// "fmt"
 )
 
-var TemplateMap = map[string](*pongo2.Template) {}
+var TemplateMap = map[string](*pongo2.Template){}
 
 var init_completed = false
 
-func Init(assetNames func()[]string, get_asset func(name string)([]byte, error)) error {
+func Init(assetNames func() []string, get_asset func(name string) ([]byte, error)) error {
 	if init_completed {
 		return nil
 	}
@@ -33,12 +33,12 @@ func Init(assetNames func()[]string, get_asset func(name string)([]byte, error))
 }
 
 func initVars() error {
-	pongo2.Globals["_go"] = map[string]interface{} {
-		"time": map[string] interface{} {
+	pongo2.Globals["_go"] = map[string]interface{}{
+		"time": map[string]interface{}{
 			"Unix": time.Unix,
 		},
 	}
-	pongo2.Globals["_pongo"] = map[string]interface{} {
+	pongo2.Globals["_pongo"] = map[string]interface{}{
 		"AsValue": pongo2.AsValue,
 	}
 	return nil

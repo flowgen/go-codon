@@ -1,12 +1,12 @@
 package golang
 
 import (
+	shared "github.com/flowgen/go-codon/shared"
+	"log"
 	"os"
 	"path/filepath"
-	"log"
-	"text/template"
 	"strings"
-	shared "github.com/grofers/go-codon/shared"
+	"text/template"
 )
 
 // var templates = template.Must(template.ParseGlob("*"))
@@ -60,7 +60,7 @@ func (bs *bootstrapper) process_templates() error {
 
 		var new_asset_path string
 		if strings.HasSuffix(asset, ".gofile") {
-			new_asset_path = filepath.Join(bs.CurrentDirPath, strings.TrimSuffix(asset, ".gofile") + ".go")
+			new_asset_path = filepath.Join(bs.CurrentDirPath, strings.TrimSuffix(asset, ".gofile")+".go")
 		} else {
 			new_asset_path = filepath.Join(bs.CurrentDirPath, asset)
 		}

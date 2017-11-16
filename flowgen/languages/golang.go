@@ -1,29 +1,29 @@
 package languages
 
 import (
-	flowgen_shared "github.com/grofers/go-codon/flowgen/shared"
-	shared "github.com/grofers/go-codon/shared"
-	"text/template"
-	"os"
 	"fmt"
+	flowgen_shared "github.com/flowgen/go-codon/flowgen/shared"
+	shared "github.com/flowgen/go-codon/shared"
+	"os"
 	"path/filepath"
+	"text/template"
 	// "strings"
 	html_template "html/template"
 	// "fmt"
 )
 
 type GoGenerator struct {
-	Data                 *flowgen_shared.PostSpec
-	Dest                 string
-	Templates            string
-	BaseImport           string
+	Data       *flowgen_shared.PostSpec
+	Dest       string
+	Templates  string
+	BaseImport string
 }
 
 type OutputObj struct {
-	Type                 string
-	Children             map[string]OutputObj
-	ExpressionSrno       int
-	FlowName             string
+	Type           string
+	Children       map[string]OutputObj
+	ExpressionSrno int
+	FlowName       string
 }
 
 func (g GoGenerator) getOutputObj(output interface{}) OutputObj {
@@ -100,7 +100,7 @@ func (g *GoGenerator) Generate() error {
 
 	tmpl, err := template.New("golang.gotmpl").Funcs(template.FuncMap{
 		"escapestring": html_template.JSEscapeString,
-		"pascalize": shared.Pascalize,
+		"pascalize":    shared.Pascalize,
 	}).ParseFiles(template_location)
 	if err != nil {
 		return err

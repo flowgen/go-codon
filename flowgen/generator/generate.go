@@ -2,8 +2,8 @@ package generator
 
 import (
 	"errors"
-	"github.com/grofers/go-codon/flowgen/languages"
-	"github.com/grofers/go-codon/flowgen/shared"
+	"github.com/flowgen/go-codon/flowgen/languages"
+	"github.com/flowgen/go-codon/flowgen/shared"
 )
 
 func Generate(language string, opts *GenOpts, post_spec *shared.PostSpec) error {
@@ -11,9 +11,9 @@ func Generate(language string, opts *GenOpts, post_spec *shared.PostSpec) error 
 	var gen languages.Generator
 	switch language {
 	case "go":
-		gen = &languages.GoGenerator {
-			Data: post_spec,
-			Dest: opts.Dest,
+		gen = &languages.GoGenerator{
+			Data:      post_spec,
+			Dest:      opts.Dest,
 			Templates: opts.Templates,
 		}
 	default:

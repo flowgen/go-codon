@@ -1,9 +1,9 @@
 package generator
 
 import (
+	"github.com/flowgen/go-codon/generator/golang"
+	"github.com/flowgen/go-codon/generator/shared"
 	"log"
-	"github.com/grofers/go-codon/generator/shared"
-	"github.com/grofers/go-codon/generator/golang"
 )
 
 type GenOpts shared.GenOpts
@@ -12,7 +12,7 @@ type generatable interface {
 	Generate(shared.GenOpts) bool
 }
 
-var language_map = map[string]generatable {
+var language_map = map[string]generatable{
 	"golang": &golang.Generator,
 }
 

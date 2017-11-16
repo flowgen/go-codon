@@ -10,7 +10,7 @@
 package workflows
 {{if .OrigSpec.References.go}}
 import (
-	config "github.com/grofers/go-codon/runtime/config"
+	config "github.com/flowgen/go-codon/runtime/config"
 	{{range $index, $element := .OrigSpec.References.go}}
 	{{$index}} "{{$element}}"
 	{{end}}

@@ -1,25 +1,27 @@
 # go-codon
 Generates Go server code from a combination of REST and Workflow DSLs.
 
-[![Build Status](https://travis-ci.org/grofers/go-codon.svg?branch=master)](https://travis-ci.org/grofers/go-codon)
+[![Build Status](https://travis-ci.org/flowgen/go-codon.svg?branch=master)](https://travis-ci.org/flowgen/go-codon)
+
+Concept developed at Grofers: [Original Repository](https://github.com/grofers/go-codon)
 
 A codon service has three components:
 - `Server`: Accepts and validates HTTP requests
 - `Clients`: Clients for upstream services which this service consumes
 - `Workflows`: Procedures for every REST endpoint of this server which consume Clients and other custom actions.
 
-Server and Client side specifications are written in Swagger. Swagger code generation is done through go-swagger. Workflow is written in `Flow`, a Mistral inspired workflow specification in YAML. Its specification can be found [here](https://github.com/grofers/go-codon/wiki/Workflow-DSL-Specification).
+Server and Client side specifications are written in Swagger. Swagger code generation is done through go-swagger. Workflow is written in `Flow`, a Mistral inspired workflow specification in YAML. Its specification can be found [here](https://github.com/flowgen/go-codon/wiki/Workflow-DSL-Specification).
 
-Check out [wiki](https://github.com/grofers/go-codon/wiki) section for more information. Follow [this tutorial](https://github.com/grofers/go-codon/wiki/Codon:-REST-Workflow-Framework) for a very basic example on how to use this tool.
+Check out [wiki](https://github.com/flowgen/go-codon/wiki) section for more information. Follow [this tutorial](https://github.com/flowgen/go-codon/wiki/Codon:-REST-Workflow-Framework) for a very basic example on how to use this tool.
 
 ## Installation
 Set up your Golang development environment ([Getting Started](https://golang.org/doc/install)). Set your `GOPATH` and `GOBIN` directories. Also add `GOBIN` to your `PATH` so that golang tools can be used in command line.
 
 Download the latest binary from Github releases and put it in your `GOBIN` directory. Or to install from source do:
 ```sh
-mkdir -p $GOPATH/src/github.com/grofers
-cd $GOPATH/src/github.com/grofers
-git clone git@github.com:grofers/go-codon.git
+mkdir -p $GOPATH/src/github.com/flowgen
+cd $GOPATH/src/github.com/flowgen
+git clone git@github.com:flowgen/go-codon.git
 cd go-codon
 make install
 ```
@@ -57,7 +59,7 @@ output:
     body: <%jmes main.combined %>
     status_code: 200
 ```
-To run this example checkout [examples](https://github.com/grofers/codon-examples).
+To run this example checkout [examples](https://github.com/flowgen/codon-examples).
 
 ## Projects go-codon would not exist without
 (Or just projects I am really thankful for)

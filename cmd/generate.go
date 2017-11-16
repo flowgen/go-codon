@@ -1,17 +1,17 @@
 package cmd
 
 import (
-	"os"
-	"log"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
 
-	codon_generator "github.com/grofers/go-codon/generator"
+	codon_generator "github.com/flowgen/go-codon/generator"
 )
 
 var (
-	generateClients		bool
-	generateWorkflow	bool
-	generateServer		bool
+	generateClients  bool
+	generateWorkflow bool
+	generateServer   bool
 )
 
 // generateCmd represents the generate command
@@ -29,11 +29,11 @@ generator flags will generate everything.`,
 			generateWorkflow = true
 			generateServer = true
 		}
-		opts := codon_generator.GenOpts {
-			Language: "golang",
-			GenerateClients: generateClients,
+		opts := codon_generator.GenOpts{
+			Language:         "golang",
+			GenerateClients:  generateClients,
 			GenerateWorkflow: generateWorkflow,
-			GenerateServer: generateServer,
+			GenerateServer:   generateServer,
 		}
 		if codon_generator.Generate(opts) {
 			log.Println("Generate successful")

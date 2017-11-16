@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"os"
-	"log"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
 
-	codon_bootstrap "github.com/grofers/go-codon/bootstrap"
+	codon_bootstrap "github.com/flowgen/go-codon/bootstrap"
 )
 
 // initCmd represents the init command

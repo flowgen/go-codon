@@ -5,9 +5,9 @@ import (
 )
 
 type GenOpts struct {
-	Spec			string
-	Dest			string
-	Templates		string
+	Spec      string
+	Dest      string
+	Templates string
 }
 
 func (o *GenOpts) EnsureDefaults() {

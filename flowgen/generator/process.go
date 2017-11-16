@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"github.com/grofers/go-codon/flowgen/shared"
+	"github.com/flowgen/go-codon/flowgen/shared"
 )
 
 func Process(opts *GenOpts) error {

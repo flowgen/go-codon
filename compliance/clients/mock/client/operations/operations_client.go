@@ -3,8 +3,8 @@ package operations
 import (
 	"errors"
 	"fmt"
-	"time"
 	conv "github.com/cstockton/go-conv"
+	"time"
 )
 
 func New() *Client {
@@ -37,7 +37,7 @@ func (a *Client) GetSuccess(all_params map[string]interface{}) (*GetMockOK, erro
 	}
 	delete(all_params, "wait")
 	delete(all_params, "_timeout")
-	return &GetMockOK {
+	return &GetMockOK{
 		Payload: all_params,
 	}, nil
 }
@@ -47,7 +47,7 @@ func (a *Client) GetFailure(all_params map[string]interface{}) (*GetMockOK, erro
 }
 
 func (a *Client) GetFailurePayload(all_params map[string]interface{}) (*GetMockOK, error) {
-	return nil, &GetMockError {
+	return nil, &GetMockError{
 		Payload: all_params,
 	}
 }

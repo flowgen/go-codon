@@ -14,7 +14,7 @@ import (
   {{end}}
   {{range $key, $value := .Imports}}{{$key}} {{ printf "%q" $value}}
   {{end}}
-  "github.com/grofers/go-codon/runtime/templates"
+  "github.com/flowgen/go-codon/runtime/templates"
 )
 {{ $package := .Package }}
 
