@@ -85,7 +85,8 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/mitchellh/mapstructure
-  version: 53818660ed4955e899c0bcafa97299a388bd7c8e
+  version: bfa91fb4511969a246e4d645f3bc84d37370597b
+  repo: git@github.com:flowgen/mapstructure.git
 - name: github.com/oleiade/reflections
   version: bfcc97ebb7fe8fa8ccfe23554901ead8794bae07
   repo: git@github.com:flowgen/reflections.git
