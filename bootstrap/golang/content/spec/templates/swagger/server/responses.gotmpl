@@ -124,6 +124,16 @@ func New{{ pascalize .Name }}({{ if eq .Code -1 }}code int{{ end }}) *{{ pascali
   }
 }
 
+// New{{ pascalize .Name }}FromMaps creates {{ pascalize .Name }} from a map or struct with defaults
+func New{{ pascalize .Name }}FromMaps(payload_obj interface{}, header_obj interface{}) *{{ pascalize .Name }} {
+  server_resp := New{{ pascalize .Name }}()
+  codon_ms.Decode(map[string]interface{}{
+    "body": payload_obj,
+    "headers": header_obj,
+  }, server_resp)
+  return server_resp
+}
+
 {{ if eq .Code -1 }}
 // WithStatusCode adds the status to the {{ humanize .Name }} response
 func ({{ .ReceiverName }} *{{ pascalize .Name }}) WithStatusCode(code int) *{{ pascalize .Name }} {
