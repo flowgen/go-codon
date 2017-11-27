@@ -1,3 +1,40 @@
+{{ define "validationPrimitiveCustom" }}
+{{if .MinLength}}
+if err := validate.MinLength({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{ if .IsNullable }}(*{{ end }}{{.ValueExpression}}{{ if .IsNullable }}){{ end }}{{ if .IsCustomFormatter }}.String(){{ end }}, {{.MinLength}}); err != nil {
+  return err
+}
+{{end}}
+{{if .MaxLength}}
+if err := validate.MaxLength({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{ if .IsNullable }}(*{{ end }}{{.ValueExpression}}{{ if .IsNullable }}){{ end }}{{ if .IsCustomFormatter }}.String(){{ end }}, {{.MaxLength}}); err != nil {
+  return err
+}
+{{end}}
+{{if .Pattern}}
+if err := validate.Pattern({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{ if .IsNullable }}(*{{ end }}{{.ValueExpression}}{{ if .IsNullable }}){{ end }}{{ if .IsCustomFormatter }}.String(){{ end }}, `{{.Pattern}}`); err != nil {
+  return err
+}
+{{end}}
+{{if .Minimum}}
+if err := validate.Minimum{{ if eq .SwaggerType "integer" }}Int{{ end }}({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{ if eq .SwaggerType "integer" }}int{{ else }}float{{ end }}64({{ if .IsNullable }}*{{ end }}{{.ValueExpression}}), {{.Minimum}}, {{.ExclusiveMinimum}}); err != nil {
+  return err
+}
+{{end}}
+{{if .Maximum}}
+if err := validate.Maximum{{ if eq .SwaggerType "integer" }}Int{{ end }}({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{ if eq .SwaggerType "integer" }}int{{ else }}float{{ end }}64({{ if .IsNullable }}*{{ end }}{{.ValueExpression}}), {{.Maximum}}, {{.ExclusiveMaximum}}); err != nil {
+  return err
+}
+{{end}}
+{{if .MultipleOf}}
+if err := validate.MultipleOf({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, float64({{ if .IsNullable }}*{{ end }}{{.ValueExpression}}), {{.MultipleOf}}); err != nil {
+  return err
+}
+{{end}}
+{{if .Enum}}
+if err := validate.Enum({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%q" .Location }}, {{.ReceiverName}}.Params[{{.Path}}], {{ printf "%#v" .Enum}}); err != nil {
+  return err
+}
+{{end}}
+{{ end }}
 {{ define "sliceparamvalidator"}}
 {{ if or .MinItems .MaxItems }}
 {{ camelize .Name }}Size := int64(len({{ if and (not .IsArray) (not .HasDiscriminator) (not .IsInterface) (not .IsStream) .IsNullable }}*{{ end }}{{ .ValueExpression }}))
@@ -22,6 +59,14 @@ if err := validate.Enum({{ .Path }}, {{ printf "%q" .Location }}, {{ if and (not
   return err
 }
 {{ end }}
+{{ end }}
+{{ define "propertyparamvalidatorCustom" }}
+{{ if .IsPrimitive }}{{ template "validationPrimitiveCustom" . }}{{ end }}
+{{ if .IsCustomFormatter }}
+if err := validate.FormatOf({{.Path}}, "{{.Location}}", "{{.SwaggerFormat}}", {{.ValueExpression}}.String(), formats); err != nil {
+  return err
+}{{ end }}
+{{ if .IsArray }}{{ template "sliceparamvalidator" . }}{{ end -}}
 {{ end }}
 {{ define "propertyparamvalidator" }}
 {{ if .IsPrimitive }}{{ template "validationPrimitive" . }}{{ end }}
@@ -124,12 +169,12 @@ func ({{ .ReceiverName }} *{{ pascalize .Name }}Params) BindRequest(r *http.Requ
   {{ if .HasQueryParams }}qs := runtime.Values(r.URL.Query()){{ end }}
 
   {{ if .HasFormParams }}if err := r.ParseMultipartForm(32 << 20); err != nil {
-		if err != http.ErrNotMultipart {
+    if err != http.ErrNotMultipart {
             return err
         } else if err := r.ParseForm(); err != nil {
             return err
         }
-	}{{ if .HasFormValueParams }}
+  }{{ if .HasFormValueParams }}
   fds := runtime.Values(r.Form)
   {{ end }}{{ end }}
 
@@ -286,7 +331,7 @@ func ({{ .ReceiverName }} *{{ $className }}Params) bind{{ pascalize .ID }}(rawDa
 {{ end }}
 {{ if or .HasValidations .HasSliceValidations }}
 func ({{ .ReceiverName }} *{{ $className }}Params) validate{{ pascalize .ID }}(formats strfmt.Registry) error {
-  {{ template "propertyparamvalidator" . }}
+  {{ template "propertyparamvalidatorCustom" . }}
   return nil
 }
 {{ end }}
