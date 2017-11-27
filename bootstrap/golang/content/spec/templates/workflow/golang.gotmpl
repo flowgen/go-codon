@@ -117,12 +117,15 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 		resp_map := resp.Payload
 		log.Println("[DEBUG] Received response from {{ (index $.ActionMap $element.Action).Pascalized }} API: ", resp_map)
 		expr_map["action"] = resp_map
+		expr_map["action_status"] = resp.Code()
 	}
 	{{ else }}
 	resp, rerr := {{ (index $.ActionMap $element.Action).Pascalized }}(arg_map)
 	err = rerr
+	expr_map["action_status"] = 0
 	if err == nil {
 		expr_map["action"] = resp
+		expr_map["action_status"] = 1
 	}
 	{{ end }}
 
@@ -204,8 +207,17 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 	if err != nil {
 		log.Println("[WARN] Failed to get response from {{ (index $.ActionMap $element.Action).Pascalized }} API: ", resp, " Err: ", err, " Args: ", arg_map)
 		is_error = true
-		err_val := reflect.ValueOf(err)
+		err_val_ptr := reflect.ValueOf(err)
+		err_val, _ := stripPtrs(err_val_ptr)
+		expr_map["action_status"] = 0
 		if err_val.Kind() == reflect.Struct {
+			err_code_func := err_val_ptr.MethodByName("Code")
+			if err_code_func.IsValid() {
+				err_status := err_code_func.Call([]reflect.Value{})[0]
+				if err_status.IsValid() {
+					expr_map["action_status"] = err_status.Interface()
+				}
+			}
 			err_payload := err_val.FieldByName("Payload")
 			if err_payload.IsValid() {
 				expr_map["action"] = err_payload.Interface()
@@ -234,6 +246,7 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 			err_obj = err_objs[index]
 			if err_obj != nil && *err_obj != nil {
 				err_val := reflect.ValueOf(*err_obj)
+				err_val, _ = stripPtrs(err_val)
 				if err_val.Kind() == reflect.Struct {
 					err_payload := err_val.FieldByName("Payload")
 					if err_payload.IsValid() {
