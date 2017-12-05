@@ -1,26 +1,27 @@
 package workflows
 
 import (
+	"errors"
 	"reflect"
 	"sync"
 )
 
 type joincoordinator struct {
 	// WaitGroup used to wait for all joins
-	wg			sync.WaitGroup
+	wg sync.WaitGroup
 	// Mutex used to coordinate wg initialization
-	mutex		sync.RWMutex
+	mutex sync.RWMutex
 	// Mutex used to coordinate task syncronization
-	fin_mutex	sync.RWMutex
+	fin_mutex sync.RWMutex
 	// Mark wg as initialized
-	initialized	bool
+	initialized bool
 	// Mark join as claimed by a task
 	// Only one task may claim to be the executor after join
-	claimed		bool
+	claimed bool
 }
 
 func (jc *joincoordinator) execute(num int) bool {
-	func () {
+	func() {
 		defer jc.mutex.Unlock()
 		jc.mutex.Lock()
 		if !jc.initialized {
@@ -30,7 +31,7 @@ func (jc *joincoordinator) execute(num int) bool {
 	}()
 
 	join_to_exit := false
-	func () {
+	func() {
 		jc.wg.Done()
 		jc.wg.Wait()
 		defer jc.mutex.Unlock()
@@ -62,12 +63,31 @@ func resolvePointers(obj interface{}) interface{} {
 		return obj
 	}
 	obj_val := reflect.ValueOf(obj)
-	for obj_val.Kind() == reflect.Ptr {
-		obj_val = obj_val.Elem()
+	if new_obj_val, err := stripPtrs(obj_val); err == nil {
+		obj_val = new_obj_val
 	}
 	if obj_val.CanInterface() {
 		return obj_val.Interface()
 	} else {
 		return nil
 	}
+}
+
+func stripPtrs(rv reflect.Value) (reflect.Value, error) {
+	// Some pointer chains are disguised as interface
+	if rv.Kind() == reflect.Interface {
+		// Try to reassess type
+		rv = reflect.ValueOf(rv.Interface())
+	}
+	for rv.Kind() == reflect.Ptr {
+		if rv.IsNil() {
+			return rv, errors.New("Pointer is nil")
+		}
+		rv = rv.Elem()
+		if rv.Kind() == reflect.Interface {
+			// Try to reassess type
+			rv = reflect.ValueOf(rv.Interface())
+		}
+	}
+	return rv, nil
 }
