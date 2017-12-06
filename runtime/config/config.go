@@ -36,7 +36,7 @@ func (cfg *Config) GetConstantPath(path string) (interface{}, error) {
 		return nil, err
 	}
 	for i := 1; i < len(path_s); i++ {
-		obj_t, ok := obj.(map[interface{}]interface{})
+		obj_t, ok := obj.(map[string]interface{})
 		if !ok {
 			return nil, errors.New("Constant not found")
 		}
