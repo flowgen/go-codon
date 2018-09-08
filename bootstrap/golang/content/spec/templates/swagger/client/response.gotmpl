@@ -24,6 +24,15 @@ type {{ pascalize .Name }} struct {
   {{ end }}
 }
 
+// GetPayload gets the payload from the {{ humanize .Name }} response
+func ({{ .ReceiverName }} *{{ pascalize .Name }}) GetPayload() interface{} {
+  {{ if .Schema }}
+  return {{ .ReceiverName }}.Payload
+  {{ else }}
+  return nil
+  {{ end }}
+}
+
 // Code gets the status code for the {{ humanize .Name }} response
 func ({{ .ReceiverName }} *{{ pascalize .Name }}) Code() int {
   {{ if eq .Code -1 }}

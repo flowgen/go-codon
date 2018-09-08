@@ -114,7 +114,7 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 	resp, rerr := {{ (index $.ActionMap $element.Action).Pascalized }}(arg_map)
 	err = rerr
 	if err == nil {
-		resp_map := resp.Payload
+		resp_map := resp.GetPayload()
 		log.Println("[DEBUG] Received response from {{ (index $.ActionMap $element.Action).Pascalized }} API: ", resp_map)
 		expr_map["action"] = resp_map
 		expr_map["action_status"] = resp.Code()
@@ -209,7 +209,7 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 		is_error = true
 		err_val_ptr := reflect.ValueOf(err)
 		err_val, _ := stripPtrs(err_val_ptr)
-		expr_map["action_status"] = 0
+		expr_map["action_status"] = nil
 		if err_val.Kind() == reflect.Struct {
 			err_code_func := err_val_ptr.MethodByName("Code")
 			if err_code_func.IsValid() {

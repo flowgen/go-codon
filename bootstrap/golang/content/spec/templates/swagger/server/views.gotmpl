@@ -38,13 +38,16 @@ func configureViews(api *{{.Package}}.{{ pascalize .Name }}API) {
       headers = map[string]interface{} {}
     }
 
+    body, body_ok := resp["body"]
+    if !body_ok {
+      body = map[string]interface{} {}
+    }
+
     switch status_code {
     {{ range .Responses }}case {{.Code}}:
-      return {{$localpackage}}.New{{ pascalize .Name }}FromMaps(resp["body"], headers)
+      return {{$localpackage}}.New{{ pascalize .Name }}FromMaps(body, headers)
     {{ end }}default:
-      {{ if .FailResponse }}return &{{$localpackage}}.{{ pascalize .FailResponse.Name }}{
-      }{{ else }}return &{{$localpackage}}.{{ pascalize .SuccessResponse.Name }}{
-      }{{ end }}
+      {{ if .FailResponse }}return {{$localpackage}}.New{{ pascalize .FailResponse.Name }}FromMaps(body, headers){{ else }}return {{$localpackage}}.New{{ pascalize .SuccessResponse.Name }}FromMaps(body, headers){{ end }}
     }
     {{ else }}
     return middleware.NotImplemented("operation {{if ne $localpackage $package}}{{ $localpackage}}{{end}}.{{pascalize .Name}} has not yet been implemented")
