@@ -1,3 +1,9 @@
+// This file is safe to edit. Once it exists it will not be overwritten
+
+
+{{ if .Copyright -}}// {{ comment .Copyright -}}{{ end }}
+
+
 package {{ .APIPackage }}
 
 import (
@@ -7,7 +13,7 @@ import (
 
   errors "github.com/go-openapi/errors"
   runtime "github.com/go-openapi/runtime"
-  graceful "github.com/tylerb/graceful"
+  security "github.com/go-openapi/runtime/security"
   "golang.org/x/net/context"
 
   {{range .DefaultImports}}{{printf "%q" .}}
@@ -18,7 +24,6 @@ import (
 )
 {{ $package := .Package }}
 
-// This file is safe to edit. Once it exists it will not be overwritten
 {{ with .GenOpts }}
 //go:generate swagger generate server --target {{ .TargetPath }} --name {{ .Name }} --spec {{ .SpecPath }}
 {{- if .APIPackage }}{{ if ne .APIPackage "operations" }} --api-package {{ .APIPackage }}{{ end }}{{ end }}
@@ -51,7 +56,7 @@ func configureAPI(api *{{.Package}}.{{ pascalize .Name }}API) http.Handler {
   // Expected interface func(string, ...interface{})
   //
   // Example:
-  // s.api.Logger = log.Printf
+  // api.Logger = log.Printf
 
   {{ range .Consumes }}{{ if .Implementation }}api.{{ pascalize .Name }}Consumer = {{ .Implementation }}
   {{else}}api.{{ pascalize .Name }}Consumer = runtime.ConsumerFunc(func(r io.Reader, target interface{}) error {
@@ -63,23 +68,31 @@ func configureAPI(api *{{.Package}}.{{ pascalize .Name }}API) http.Handler {
     return errors.NotImplemented("{{.Name}} producer has not yet been implemented")
   }){{end}}
   {{end}}
-  {{range .SecurityDefinitions}}
-  {{if .IsBasicAuth}}
+  {{ range .SecurityDefinitions }}
+    {{- if .IsBasicAuth }}
   // Applies when the Authorization header is set with the Basic scheme
   api.{{ pascalize .ID }}Auth = func(user string, pass string) ({{if not ( eq .Principal "interface{}" )}}*{{ end }}{{.Principal}}, error) {
     return nil, errors.NotImplemented("basic auth  ({{ .ID }}) has not yet been implemented")
   }
-  {{end}}{{if .IsAPIKeyAuth}}
+    {{- else if .IsAPIKeyAuth }}
   // Applies when the "{{ .Name }}" {{ .Source }} is set
   api.{{ pascalize .ID }}Auth = func(token string) ({{if not ( eq .Principal "interface{}" )}}*{{ end }}{{.Principal}}, error) {
     return nil, errors.NotImplemented("api key auth ({{ .ID }}) {{.Name}} from {{.Source}} param [{{ .Name }}] has not yet been implemented")
   }
-  {{end}}{{if .IsOAuth2}}
+    {{- else if .IsOAuth2 }}
   api.{{ pascalize .ID }}Auth = func(token string, scopes []string) ({{if not ( eq .Principal "interface{}" )}}*{{ end }}{{.Principal}}, error) {
     return nil, errors.NotImplemented("oauth2 bearer auth ({{ .ID }}) has not yet been implemented")
   }
-  {{end}}
-  {{end}}
+    {{- end }}
+  {{- end }}
+  {{- if .SecurityDefinitions }}
+
+  // Set your custom authorizer if needed. Default one is security.Authorized()
+  // Expected interface runtime.Authorizer
+  //
+  // Example:
+  // api.APIAuthorizer = security.Authorized()
+  {{- end }}
   configureViews(api)
 
   api.ServerShutdown = func() {  }
@@ -96,18 +109,18 @@ func configureTLS(tlsConfig *tls.Config) {
 // If you need to modify a config, store server instance to stop it individually later, this is the place.
 // This function can be called multiple times, depending on the number of serving schemes.
 // scheme value will be set accordingly: "http", "https" or "unix"
-func configureServer(s *graceful.Server, scheme string) {
-	templates.Init(bintemplate.AssetNames, bintemplate.Asset)
+func configureServer(s *http.Server, scheme, addr string) {
+  templates.Init(bintemplate.AssetNames, bintemplate.Asset)
 }
 
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation
 func setupMiddlewares(handler http.Handler) http.Handler {
-	return handler
+  return handler
 }
 
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	return handler
+  return handler
 }

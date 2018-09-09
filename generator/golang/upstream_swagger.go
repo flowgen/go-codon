@@ -36,8 +36,9 @@ func GenerateUpstreamSwagger(gen *generator) bool {
 		Spec:              gen.CurrentSpecFilePath,
 		Target:            gen.CurrentDirTarget,
 		TemplateDir:       "spec/templates/swagger/",
+		IsClient:          true,
 	}
-	if err := opts.EnsureDefaults(true); err != nil {
+	if err := opts.EnsureDefaults(); err != nil {
 		log.Println(err)
 		return false
 	}
@@ -90,8 +91,9 @@ func GenerateServiceSwagger(gen *generator) bool {
 		Name:              "",
 		FlagStrategy:      "go-flags",
 		CompatibilityMode: "modern",
+		IsClient:          false,
 	}
-	if err := opts.EnsureDefaults(false); err != nil {
+	if err := opts.EnsureDefaults(); err != nil {
 		log.Println(err)
 		return false
 	}

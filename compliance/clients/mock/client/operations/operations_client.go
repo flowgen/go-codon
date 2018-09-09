@@ -26,6 +26,14 @@ func (o *GetMockError) Error() string {
 	return fmt.Sprintf("[GET /{unknown}][%d] %+v", 400, o.Payload)
 }
 
+func (o *GetMockOK) GetPayload() interface{} {
+	return o.Payload
+}
+
+func (o *GetMockOK) Code() int {
+	return 200
+}
+
 func (a *Client) GetSuccess(all_params map[string]interface{}) (*GetMockOK, error) {
 	wait, ok := all_params["wait"]
 	if ok {
