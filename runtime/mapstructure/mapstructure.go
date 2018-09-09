@@ -10,7 +10,7 @@ func Decode(input, output interface{}) error {
 		Result:           output,
 		WeaklyTypedInput: true,
 		TagName:          "json",
-		AlwaysSquash:     true,
+		SquashEmbedded:   true,
 	}
 
 	decoder, err := ms.NewDecoder(config)
