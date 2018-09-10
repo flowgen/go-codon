@@ -16,6 +16,7 @@ type Client struct {
 
 type GetMockOK struct {
 	Payload interface{}
+	Headers map[string]interface{}
 }
 
 type GetMockError struct {
@@ -28,6 +29,10 @@ func (o *GetMockError) Error() string {
 
 func (o *GetMockOK) GetPayload() interface{} {
 	return o.Payload
+}
+
+func (o *GetMockOK) GetHeaders() map[string]interface{} {
+	return o.Headers
 }
 
 func (o *GetMockOK) Code() int {
