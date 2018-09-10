@@ -33,6 +33,13 @@ func ({{ .ReceiverName }} *{{ pascalize .Name }}) GetPayload() interface{} {
   {{ end }}
 }
 
+// GetHeaders gets the headers from the {{ humanize .Name }} response
+func ({{ .ReceiverName }} *{{ pascalize .Name }}) GetHeaders() map[string]interface{} {
+  headers := map[string]interface{}{}{{ range .Headers }}
+  headers["{{ .Name }}"] = {{ .ReceiverName }}.{{ pascalize .Name }}{{ end }}
+  return headers
+}
+
 // Code gets the status code for the {{ humanize .Name }} response
 func ({{ .ReceiverName }} *{{ pascalize .Name }}) Code() int {
   {{ if eq .Code -1 }}

@@ -116,7 +116,9 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 	if err == nil {
 		resp_map := resp.GetPayload()
 		log.Println("[DEBUG] Received response from {{ (index $.ActionMap $element.Action).Pascalized }} API: ", resp_map)
+		resp_headers_map := resp.GetHeaders()
 		expr_map["action"] = resp_map
+		expr_map["action_meta"] = resp_headers_map
 		expr_map["action_status"] = resp.Code()
 	}
 	{{ else }}
@@ -221,6 +223,13 @@ func {{printf "task_%s__%s" $.OrigSpec.Name $index}}(flow_data *{{printf "%s_dat
 			err_payload := err_val.FieldByName("Payload")
 			if err_payload.IsValid() {
 				expr_map["action"] = err_payload.Interface()
+			}
+			err_headers_func := err_val_ptr.MethodByName("GetHeaders")
+			if err_headers_func.IsValid() {
+				err_headers := err_headers_func.Call([]reflect.Value{})[0]
+				if err_headers.IsValid() {
+					expr_map["action_meta"] = err_headers.Interface()
+				}
 			}
 		} else {
 			expr_map["action_exception"] = err

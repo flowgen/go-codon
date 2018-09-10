@@ -147,7 +147,7 @@ if err := validate.Enum({{ if .Path }}{{ .Path }}{{else}}""{{end}}, {{ printf "%
 
 {{ define "sliceparamvalidator"}}
 {{ if or .MinItems .MaxItems }}
-    {{ camelize .Name }}Size := int64(len({{ if and (not .IsArray) (not .HasDiscriminator) (not .IsInterface) (not .IsStream) .IsNullable }}*{{ end }}{{ if and .Child (not (hasPrefix .ValueExpression "o.")) }}{{ .Child.ValueExpression }}C{{ else }}{{ .ReceiverName }}.Params[{{.Path}}]{{ end }}))
+    {{ camelize .Name }}Size := int64(len({{.ReceiverName}}.Params[{{.Path}}].({{ .GoType }})))
 {{ end }}
 {{ if .MinItems }}
 // {{ .ItemsDepth }}minItems: {{ .MinItems }}
@@ -163,24 +163,13 @@ if err := validate.MaxItems({{ .Path }}, {{ printf "%q" .Location }}, {{ cameliz
 {{ end }}
 {{ if .UniqueItems }}
 // {{ .ItemsDepth }}uniqueItems: true
-if err := validate.UniqueItems({{ .Path }}, {{ printf "%q" .Location }}, {{ if and (not .IsArray) (not .HasDiscriminator) (not .IsInterface) (not .IsStream) .IsNullable }}*{{ end }}{{ if and .Child (not ( hasPrefix .ValueExpression "o." )) }}{{ .Child.ValueExpression }}C{{ else }}{{ .ReceiverName }}.Params[{{.Path}}]{{ end }}); err != nil {
+if err := validate.UniqueItems({{ .Path }}, {{ printf "%q" .Location }}, {{.ReceiverName}}.Params[{{.Path}}]); err != nil {
   return err
 }
 {{ end }}
 {{ if .Enum }}
 // {{ .ItemsDepth }}Enum: {{ .Enum }}
-if err := validate.Enum(
-  {{- .Path }}, {{ printf "%q" .Location }},
-  {{- if and (not .IsArray) (not .HasDiscriminator) (not .IsInterface) (not .IsStream) .IsNullable }}*{{ end -}}
-  {{- if .Child -}}
-    {{- if not ( hasPrefix .ValueExpression "o." ) -}}
-    {{- .Child.ValueExpression }}C{{- if .IsCustomFormatter }}.String(){{ end -}}
-    {{- else -}}
-      {{- .ValueExpression -}}{{- if .Child.IsCustomFormatter }}.String(){{ end -}}
-    {{- end -}}
-  {{- end -}},
-  {{- printf "%#v" .Enum -}}
-    ); err != nil {
+if err := validate.Enum({{ .Path }}, {{ printf "%q" .Location }}, {{.ReceiverName}}.Params[{{.Path}}], {{ printf "%#v" .Enum}}); err != nil {
   return err
   }
 {{ end }}
@@ -571,14 +560,14 @@ func ({{ .ReceiverName }} *{{ $className }}Params) bind{{ pascalize .ID }}(rawDa
   if err != nil {
     return errors.InvalidType({{ .Path }}, {{ printf "%q" .Location }}, {{ printf "%q" .GoType }}, raw)
   }
-  {{$receiverName}}.Params[{{.Path}}] = {{ if .IsNullable }}&{{ end }}value
+  {{$receiverName}}.Params[{{.Path}}] = value
       {{ else if .IsCustomFormatter }}// Format: {{ .SwaggerFormat }}
   value, err := formats.Parse({{ printf "%q" .SwaggerFormat }}, raw)
   if err != nil {
     return errors.InvalidType({{ .Path }}, {{ printf "%q" .Location }}, {{ printf "%q" .GoType }}, raw)
   }
   {{$receiverName}}.Params[{{.Path}}] = {{ if and (not .IsArray) (not .HasDiscriminator) (not .IsFileParam) (not .IsStream) (not .IsNullable) }}*{{ end }}(value.(*{{ .GoType }}))
-      {{else}}{{$receiverName}}.Params[{{.Path}}] = {{ if .IsNullable }}&{{ end }}raw
+      {{else}}{{$receiverName}}.Params[{{.Path}}] = raw
       {{ end }}
       {{if .HasValidations }}if err := {{ .ReceiverName }}.validate{{ pascalize .ID }}(formats); err != nil {
     return err
