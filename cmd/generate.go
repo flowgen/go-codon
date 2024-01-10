@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 
-	codon_generator "github.com/flowgen/go-codon/generator"
+	"github.com/spf13/cobra"
+
+	codon_generator "go-codon/generator"
 )
 
 var (

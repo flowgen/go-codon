@@ -3,15 +3,16 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
-	conv "github.com/cstockton/go-conv"
-	pongo2 "github.com/flosch/pongo2"
-	shared "github.com/flowgen/go-codon/shared"
-	jmespath "github.com/jmespath/go-jmespath"
-	"gopkg.in/yaml.v2"
+	shared "go-codon/shared"
 	"io/ioutil"
 	"log"
 	"regexp"
 	"strings"
+
+	conv "github.com/cstockton/go-conv"
+	pongo2 "github.com/flosch/pongo2"
+	jmespath "github.com/jmespath/go-jmespath"
+	"gopkg.in/yaml.v2"
 )
 
 type PostSpec struct {

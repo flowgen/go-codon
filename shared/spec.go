@@ -1,15 +1,13 @@
 package shared
 
 import (
-	"errors"
-	"github.com/go-openapi/swag"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"os"
 	"path/filepath"
-	goruntime "runtime"
 	"strings"
+
+	"github.com/go-openapi/swag"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -40,46 +38,14 @@ func DetectFileSpec(path string) int {
 	}
 }
 
-// Copyright 2015 go-swagger maintainers
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 func BaseImport(tgt string) (string, error) {
-	// Modified error reporting structure to match go-codon's
-	p, err := filepath.Abs(tgt)
+	absPath, err := filepath.Abs(tgt)
 	if err != nil {
 		return "", err
 	}
 
-	var pth string
-	for _, gp := range filepath.SplitList(os.Getenv("GOPATH")) {
-		pp := filepath.Join(filepath.Clean(gp), "src")
-		var np, npp string
-		if goruntime.GOOS == "windows" {
-			np = strings.ToLower(p)
-			npp = strings.ToLower(pp)
-		}
-		if strings.HasPrefix(np, npp) {
-			pth, err = filepath.Rel(pp, p)
-			if err != nil {
-				return "", err
-			}
-			break
-		}
-	}
-
-	if pth == "" {
-		return "", errors.New("target must reside inside a location in the $GOPATH/src")
-	}
-	return pth, nil
+	leafFolder := filepath.Base(absPath)
+	return leafFolder, nil
 }
 
 func Pascalize(arg string) string {

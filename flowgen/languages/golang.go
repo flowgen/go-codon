@@ -2,11 +2,12 @@ package languages
 
 import (
 	"fmt"
-	flowgen_shared "github.com/flowgen/go-codon/flowgen/shared"
-	shared "github.com/flowgen/go-codon/shared"
+	flowgen_shared "go-codon/flowgen/shared"
+	shared "go-codon/shared"
 	"os"
 	"path/filepath"
 	"text/template"
+
 	// "strings"
 	html_template "html/template"
 	// "fmt"

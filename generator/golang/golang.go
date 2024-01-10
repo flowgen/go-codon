@@ -1,7 +1,6 @@
 package golang
 
 import (
-	imports "golang.org/x/tools/imports"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,13 +9,15 @@ import (
 	"strings"
 	"text/template"
 
+	imports "golang.org/x/tools/imports"
+
 	"github.com/go-openapi/swag"
 
-	gen_shared "github.com/flowgen/go-codon/generator/shared"
-	config "github.com/flowgen/go-codon/runtime/config"
-	codon_shared "github.com/flowgen/go-codon/shared"
+	gen_shared "go-codon/generator/shared"
+	config "go-codon/runtime/config"
+	codon_shared "go-codon/shared"
 
-	flowgen "github.com/flowgen/go-codon/flowgen/generator"
+	flowgen "go-codon/flowgen/generator"
 )
 
 // Important: Dont use lists, use maps

@@ -1,8 +1,8 @@
 package generator
 
 import (
-	"github.com/flowgen/go-codon/generator/golang"
-	"github.com/flowgen/go-codon/generator/shared"
+	"go-codon/generator/golang"
+	"go-codon/generator/shared"
 	"log"
 )
 

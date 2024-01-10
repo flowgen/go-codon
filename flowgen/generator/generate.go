@@ -2,8 +2,8 @@ package generator
 
 import (
 	"errors"
-	"github.com/flowgen/go-codon/flowgen/languages"
-	"github.com/flowgen/go-codon/flowgen/shared"
+	"go-codon/flowgen/languages"
+	"go-codon/flowgen/shared"
 )
 
 func Generate(language string, opts *GenOpts, post_spec *shared.PostSpec) error {

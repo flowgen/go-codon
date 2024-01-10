@@ -1,10 +1,6 @@
 installdependencies:
 	./scripts/dependencies.sh
-	go get github.com/go-openapi/runtime
-	go get github.com/tylerb/graceful
-	go get github.com/jessevdk/go-flags
-	go get golang.org/x/net/context
-	go get golang.org/x/net/context/ctxhttp
+	go mod tidy
 
 installtestdependencies:
 	go get github.com/stretchr/testify/assert

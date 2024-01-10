@@ -6,7 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	shared "github.com/flowgen/go-codon/shared"
+	shared "go-codon/shared"
+
 	swagger_generator "github.com/go-swagger/go-swagger/generator"
 )
 

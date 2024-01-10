@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"github.com/flowgen/go-codon/bootstrap/golang"
+	"go-codon/bootstrap/golang"
 	"log"
 )
 

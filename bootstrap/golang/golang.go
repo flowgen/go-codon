@@ -1,7 +1,7 @@
 package golang
 
 import (
-	shared "github.com/flowgen/go-codon/shared"
+	shared "go-codon/shared"
 	"log"
 	"os"
 	"path/filepath"

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/flowgen/go-codon/testing/workflows"
-	"github.com/stretchr/testify/assert"
+	"go-codon/testing/workflows"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func deepcopyMap(src map[string]interface{}) map[string]interface{} {
