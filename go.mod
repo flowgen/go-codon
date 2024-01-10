@@ -1,4 +1,4 @@
-module github.com/flowgen/go-codon
+module go-codon
 
 go 1.18
 
