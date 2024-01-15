@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	shared "go-codon/shared"
-	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 
 	conv "github.com/cstockton/go-conv"
 	pongo2 "github.com/flosch/pongo2"
 	jmespath "github.com/jmespath/go-jmespath"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type PostSpec struct {
@@ -95,7 +95,7 @@ type Action struct {
 }
 
 func ReadSpec(filename string) (Spec, error) {
-	filename_data, err := ioutil.ReadFile(filename)
+	filename_data, err := os.ReadFile(filename)
 	if err != nil {
 		return Spec{}, err
 	}

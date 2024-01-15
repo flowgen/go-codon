@@ -1,13 +1,13 @@
 package shared
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/go-openapi/swag"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 func DetectFileSpec(path string) int {
 	_, filename := filepath.Split(path)
 	if strings.HasSuffix(filename, ".yml") || strings.HasSuffix(filename, ".yaml") {
-		yamlFile, err := ioutil.ReadFile(path)
+		yamlFile, err := os.ReadFile(path)
 		if err != nil {
 			log.Println(err)
 			return UNKNOWN

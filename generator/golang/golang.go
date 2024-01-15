@@ -1,7 +1,6 @@
 package golang
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -146,7 +145,7 @@ func (gen *generator) GenerateDynamic() bool {
 
 func (gen *generator) GenerateUpstream() bool {
 	// Get list of all the files in spec/clients
-	files, err := ioutil.ReadDir("spec/clients")
+	files, err := os.ReadDir("spec/clients")
 	if err != nil {
 		log.Println(err)
 		return false
@@ -193,7 +192,7 @@ func (gen *generator) GenerateService() bool {
 }
 
 func (gen *generator) generateWorkflows(prefix string, dest string) bool {
-	files, err := ioutil.ReadDir(prefix)
+	files, err := os.ReadDir(prefix)
 	if err != nil {
 		log.Println(err)
 		return false
@@ -290,7 +289,7 @@ func (gen *generator) Generate(opts gen_shared.GenOpts) bool {
 var Generator = generator{}
 
 func formatFunc(filename string) error {
-	content, err := ioutil.ReadFile(filename)
+	content, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -306,7 +305,7 @@ func formatFunc(filename string) error {
 		return err
 	}
 
-	err = ioutil.WriteFile(filename, new_content, os.FileMode(0755))
+	err = os.WriteFile(filename, new_content, os.FileMode(0755))
 	if err != nil {
 		return err
 	}

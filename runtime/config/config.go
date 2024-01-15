@@ -3,9 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -64,7 +65,7 @@ func (cfg *Config) MustGetConstantPath(path string) interface{} {
 var YmlConfig = ReadYmlConfig()
 
 func ReadYmlConfig() *Config {
-	data, err := ioutil.ReadFile("config.yml")
+	data, err := os.ReadFile("config.yml")
 	if err != nil {
 		return nil
 	}
